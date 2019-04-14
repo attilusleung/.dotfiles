@@ -1,12 +1,13 @@
+"enable mouse mode
 set mouse=a
 
-
+"something neovim needs for vimtex to work?
 let g:vimtex_compiler_progname = 'nvr'
 
 let g:ale_sign_column_always = 1
-hi SignColumn ctermbg=233
+"hi SignColumn ctermbg=233
 
-
+"Numbered lines
 set number
 
 if empty(glob('~/.config/nvim/autoload/plug.vim')) 
@@ -24,6 +25,13 @@ Plug 'w0rp/ale'
 Plug 'lervag/vimtex'
 "vim-gitgutter
 Plug 'airblade/vim-gitgutter'
+"falcon colorscheme
+Plug 'fenetikm/falcon'
+"nerdtree
+Plug 'scrooloose/nerdtree'
 
 call plug#end()
 
+"set colorscheme and enable 24bit colors, whatever that means 
+colorscheme falcon
+set termguicolors
