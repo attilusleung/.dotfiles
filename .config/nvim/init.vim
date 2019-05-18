@@ -19,6 +19,8 @@ call plug#begin('~/.config/nvim/plugged')
 
 "tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
+"tab merge
+Plug 'vim-scripts/Tabmerge'
 "ale linter
 Plug 'w0rp/ale'
 "vimtex"
@@ -29,8 +31,16 @@ Plug 'airblade/vim-gitgutter'
 Plug 'fenetikm/falcon'
 "nerdtree
 Plug 'scrooloose/nerdtree'
+"vim-fugitive (for git)
+Plug 'tpope/vim-fugitive'
+"vim-commentary (for commenting)
+Plug 'tpope/vim-commentary'
 
 call plug#end()
+
+"Shortcut for tab merge
+noremap <C-t> :Tabmerge 
+noremap <Space> :NERDTreeToggle<cr>
 
 "set colorscheme and enable 24bit colors, whatever that means 
 colorscheme falcon
