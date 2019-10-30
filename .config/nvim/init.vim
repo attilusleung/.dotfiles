@@ -15,8 +15,8 @@ if has("autocmd")
     " Use actual tab chars in Makefiles.
     autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
     autocmd FileType ocaml set tabstop=2 shiftwidth=2 softtabstop=2 textwidth=80
-    " autocmd FileType text set textwidth=80 fo+=w
-    " autocmd FileType latex set textwidth=80 fo+=w
+    autocmd FileType text set textwidth=80
+    autocmd FileType latex set textwidth=80
     " ocaml commentstring for commenting
     " set commentstring=(*\ %s\ *)
 endif
@@ -42,20 +42,19 @@ set expandtab       " Expand TABs to spaces.
 " TODO: Toggle line formating
 let g:w_set_in_wrap = 0
 
-function! ToggleWWrap()
+function! s:togglewwrap()
     if g:w_set_in_wrap
-        set fo-=w
-        echo "nani"
+        st
+        et fo-=w
         let g:w_set_in_wrap = 0
     else
         set fo+=w
-        echo "yeet"
         let g:w_set_in_wrap = 1
     endif
 endfunction
 
-nnoremap <F7> :call ToggleWWrap()<CR>
-vnoremap <F7> :call ToggleWWrap()<CR>
+nnoremap <f7> :call togglewwrap()<cr>
+vnoremap <f7> :call togglewwrap()<cr>
 
 
 "remove preview/scratch widow
@@ -64,7 +63,7 @@ set completeopt-=preview
 " something neovim needs for vimtex to work?
 let g:vimtex_compiler_progname = 'nvr'
 
-" ALE
+" ale
 let g:ale_sign_column_always = 1
 let g:ale_linters = {
 \   'python': ['flake8'],
@@ -141,8 +140,12 @@ Plug 'zchee/deoplete-jedi'
 Plug 'copy/deoplete-ocaml'
 " cpp/clang deoplete
 " Plug 'zchee/deoplete-clang'
-
+" ocaml indent!
 Plug 'let-def/ocp-indent-vim'
+" lightline
+Plug 'itchyny/lightline.vim'
+" Floating terminal!
+Plug 'voldikss/vim-floaterm'
 
 call plug#end()
 
@@ -190,6 +193,16 @@ nmap <F8> <Plug>(ale_fix)
 " tcomment block comment
 vnoremap <silent> gb :TCommentBlock<CR>
 
+" get rid of the line under lightline
+set noshowmode
+let g:lightline = {
+    \ 'colorscheme': 'jellybeans',
+    \}
+
+" floaterm keymaps
+let g:floater_keymap_toggle = '<CR>'
+" nnoremap <silent> <CR> :FloatermToggle<CR>
+
 " set colorscheme and enable 24bit colors
 colorscheme falcon
 set termguicolors
@@ -214,22 +227,22 @@ function! OpamConfMerlin()
   execute "set rtp+=" . l:dir
 endfunction
 let s:opam_configuration['merlin'] = function('OpamConfMerlin')
-"
-" let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
-" let s:opam_packages = ["ocp-indent", "merlin"]
-" let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
-" let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
-" for tool in s:opam_packages
-"   " Respect package order (merlin should be after ocp-index)
-"   if count(s:opam_available_tools, tool) > 0
-"     call s:opam_configuration[tool]()
-"   endif
-" endfor
-" " ## end of OPAM user-setup addition for vim / base ## keep this line
-" " ## added by OPAM user-setup for vim / ocp-indent ## 10d39c3c9a127157304e873999d4cfce ## you can edit, but keep this line
-" if count(s:opam_available_tools,"ocp-indent") == 0
-"   source "/home/attilus/.opam/4.08.1/share/ocp-indent/vim/indent/ocaml.vim"
-" endif
+
+let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
+let s:opam_packages = ["ocp-indent", "merlin"]
+let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
+let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
+for tool in s:opam_packages
+  " Respect package order (merlin should be after ocp-index)
+  if count(s:opam_available_tools, tool) > 0
+    call s:opam_configuration[tool]()
+  endif
+endfor
+" ## end of OPAM user-setup addition for vim / base ## keep this line
+" ## added by OPAM user-setup for vim / ocp-indent ## 10d39c3c9a127157304e873999d4cfce ## you can edit, but keep this line
+if count(s:opam_available_tools,"ocp-indent") == 0
+  source "/home/aqcrazyboy/.opam/4.08.1/share/ocp-indent/vim/indent/ocaml.vim"
+endif
 " " ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line
 
 let g:EclimCompletionMethod = 'omnifunc'
