@@ -1,0 +1,4 @@
+alias auv-docker="~/cuauv/workspaces/repo/docker/auv-docker.py"
+alias icat="kitty +kitten icat"
+alias start-node="source /usr/share/nvm/init-nvm.sh"
+alias zathura="tabbed -c zathura -e"

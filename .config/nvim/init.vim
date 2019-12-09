@@ -2,10 +2,43 @@
 set mouse=a
 
 " Numbered lines
-set number
+set number relativenumber
 
 " nocampatible!!!
 set nocompatible
+
+function! OcamlSetup()
+    let s:opam_share_dir = substitute(system("opam config var share"), '[\r\n]*$', '', '')
+    execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
+    execute "set rtp+=" . s:opam_share_dir . "/merlin/vim"
+    " source "/home/aqcrazyboy/.opam/4.08.1/share/ocp-indent/vim/indent/ocaml.vim"
+    " let s:opam_configuration = {}
+    " function! OpamConfOcpIndent()
+    "   execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
+    " endfunction
+    " let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
+    " function! OpamConfMerlin()
+    "   let l:dir = s:opam_share_dir . "/merlin/vim"
+    "   execute "set rtp+=" . l:dir
+    " endfunction
+    " let s:opam_configuration['merlin'] = function('OpamConfMerlin')
+    " let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
+    " let s:opam_packages = ["ocp-indent", "merlin"]
+    " let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
+    " let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
+    " for tool in s:opam_packages
+    "   " Respect package order (merlin should be after ocp-index)
+    "   if count(s:opam_available_tools, tool) > 0
+    "     call s:opam_configuration[tool]()
+    "   endif
+    " endfor
+" ## end of OPAM user-setup addition for vim / base ## keep this line
+" ## added by OPAM user-setup for vim / ocp-indent ## 10d39c3c9a127157304e873999d4cfce ## you can edit, but keep this line
+    " if count(s:opam_available_tools,"ocp-indent") == 0
+    "   source "/home/aqcrazyboy/.opam/4.08.1/share/ocp-indent/vim/indent/ocaml.vim"
+    " endif
+" ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line
+endfunction
 
 " for indenting: https://stackoverflow.com/questions/234564/tab-key-4-spaces-and-auto-indent-after-curly-braces-in-vim
 " Only do this part when compiled with support for autocommands.
@@ -15,10 +48,13 @@ if has("autocmd")
     " Use actual tab chars in Makefiles.
     autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
     autocmd FileType ocaml set tabstop=2 shiftwidth=2 softtabstop=2 textwidth=80
+    " autocmd FileType ocaml call OcamlSetup()
     autocmd FileType text set textwidth=80
-    autocmd FileType latex set textwidth=80
+    autocmd FileType tex set textwidth=80
+    autocmd FileType markdown set textwidth=80
     " ocaml commentstring for commenting
     " set commentstring=(*\ %s\ *)
+    " autocmd FileType,BufEnter * call plug#load('ale')
 endif
 " For everything else, use a tab width of 4 space chars.
 set tabstop=4       " The width of a TAB is set to 4.
@@ -38,6 +74,8 @@ set expandtab       " Expand TABs to spaces.
 "     autocmd VimResized * if (exists('b:softwrap') && &columns > 80) | set columns=80 | endif
 "     autocmd BufEnter * set columns=999
 " augroup END
+
+let g:python3_host_prog = '/home/attilus/.pyenv/versions/nvim3/bin/python'
 
 " TODO: Toggle line formating
 let g:w_set_in_wrap = 0
@@ -68,12 +106,16 @@ let g:ale_sign_column_always = 1
 let g:ale_linters = {
 \   'python': ['flake8'],
 \   'ocaml':['merlin'],
-\   'text': ['vale']
+\   'text': ['vale'],
+\   'rust': ['rls', 'rustc']
 \}
+
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'markdown': ['remove_trailing_lines'],
 \   'python': ['yapf', 'remove_trailing_lines', 'trim_whitespace'],
-\   'ocaml': ['ocamlformat', 'ocp-indent', 'remove_trailing_lines', 'trim_whitespace']
+\   'ocaml': ['ocamlformat', 'ocp-indent', 'remove_trailing_lines', 'trim_whitespace'],
+\   'rust': ['rustfmt']
 \}
 let g:ale_fix_on_save = 1
 let g:ale_fix_on_save_ignore = {
@@ -82,6 +124,11 @@ let g:ale_fix_on_save_ignore = {
 \}
 " let g:ale_ocaml_ocamlformat_options = '--enable-outside-detected-project --profile=janestreet'
 let g:ale_ocaml_ocamlformat_options = '--enable-outside-detected-project'
+let g:ale_python_auto_pipenv = 1
+
+let g:markdown_fenced_languages = ['python', 'cpp', 'c', 'rust', 'ocaml']
+
+call OcamlSetup()
 
 " nmap <F8> <Plug>(ale_fix)
 
@@ -101,13 +148,15 @@ Plug 'christoomey/vim-tmux-navigator'
 " tab merge
 Plug 'vim-scripts/Tabmerge'
 " ale linter
-Plug 'w0rp/ale'
+" Defer loading until buffer enter
+Plug 'w0rp/ale' ", { 'on' : [] }
 " vimtex"
 Plug 'lervag/vimtex'
 " vim-gitgutter
 Plug 'airblade/vim-gitgutter'
 " falcon colorscheme
 Plug 'fenetikm/falcon'
+" Plug 'tomasr/molokai'
 " nerdtree
 Plug 'scrooloose/nerdtree'
 " vim-fugitive (for git)
@@ -146,7 +195,10 @@ Plug 'let-def/ocp-indent-vim'
 Plug 'itchyny/lightline.vim'
 " Floating terminal!
 Plug 'voldikss/vim-floaterm'
-
+" Rust
+Plug 'rust-lang/rust.vim'
+" markdown?
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 call plug#end()
 
 " deoplete
@@ -154,7 +206,7 @@ let g:deoplete#enable_at_startup = 0
 " call deoplete#custom#option('auto_complete', v:false)
 
 " Shortcut for tab merge
-noremap <C-t> :Tabmerge <cr>
+" noremap <C-t> :Tabmerge <cr>
 noremap <C-s> <C-w>T
 noremap <silent> <Space> :NERDTreeToggle<cr>
 "inoremap <C-Tab> <C-x><C-p>
@@ -197,55 +249,21 @@ vnoremap <silent> gb :TCommentBlock<CR>
 set noshowmode
 let g:lightline = {
     \ 'colorscheme': 'jellybeans',
-    \}
+    \ 'active': {
+    \   'left': [ ['mode', 'paste'],
+    \             ['readonly', 'filename', 'modified', 'gitbranch'] ]
+    \ },
+    \ 'component_function': {
+    \   'gitbranch': 'fugitive#head'
+    \ },
+    \ }
 
 " floaterm keymaps
-let g:floater_keymap_toggle = '<CR>'
-" nnoremap <silent> <CR> :FloatermToggle<CR>
+" let g:floater_keymap_toggle = '<C-t>'
+nnoremap <silent> <C-t> :FloatermToggle<CR>
+tnoremap <silent> <C-t> <C-\><C-n>:FloatermToggle<CR>
 
 " set colorscheme and enable 24bit colors
 colorscheme falcon
+" colorscheme molokai
 set termguicolors
-" " ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
-let s:opam_share_dir = system("opam config var share")
-let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
-
-let s:opam_configuration = {}
-
-function! OpamConfOcpIndent()
-  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
-endfunction
-let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
-"
-" function! OpamConfOcpIndex()
-"   execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
-" endfunction
-" let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
-"
-function! OpamConfMerlin()
-  let l:dir = s:opam_share_dir . "/merlin/vim"
-  execute "set rtp+=" . l:dir
-endfunction
-let s:opam_configuration['merlin'] = function('OpamConfMerlin')
-
-let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
-let s:opam_packages = ["ocp-indent", "merlin"]
-let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
-let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
-for tool in s:opam_packages
-  " Respect package order (merlin should be after ocp-index)
-  if count(s:opam_available_tools, tool) > 0
-    call s:opam_configuration[tool]()
-  endif
-endfor
-" ## end of OPAM user-setup addition for vim / base ## keep this line
-" ## added by OPAM user-setup for vim / ocp-indent ## 10d39c3c9a127157304e873999d4cfce ## you can edit, but keep this line
-if count(s:opam_available_tools,"ocp-indent") == 0
-  source "/home/aqcrazyboy/.opam/4.08.1/share/ocp-indent/vim/indent/ocaml.vim"
-endif
-" " ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line
-
-let g:EclimCompletionMethod = 'omnifunc'
-let g:deoplete#omni#input_patterns = {}
-let g:deoplete#omni#input_patterns.java = '[^. *\t]\.\w*'
-let g:EclimLogLevel = 'trace'
