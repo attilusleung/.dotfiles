@@ -161,7 +161,6 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'fenetikm/falcon'
 " emmet - html snippets
 Plug 'mattn/emmet-vim'
-<<<<<<< Updated upstream
 
 if !exists('g:started_by_firenvim')
     " tmux navigator
