@@ -22,6 +22,8 @@ HISTSIZE=1000
 SAVEHIST=500
 #export EDITOR=/usr/bin/nano
 #export VISUAL=/usr/bin/nano
+export EDITOR=nvim
+export VISUAL=nvim
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 
 
@@ -213,3 +215,8 @@ PROMPT=" $PROMPT"
 test -r /home/attilus/.opam/opam-init/init.zsh && . /home/attilus/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 # node version manager
 # source /usr/share/nvm/init-nvm.sh
+
+# zoxide (z but rust)
+eval "$(zoxide init zsh)"
+
+export LC_ALL=en_US.UTF-8

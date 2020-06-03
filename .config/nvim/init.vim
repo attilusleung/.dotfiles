@@ -45,6 +45,7 @@ endfunction
 if has("autocmd")
     " Use filetype detection and file-based automatic indenting.
     filetype plugin indent on
+    syntax on
     " Use actual tab chars in Makefiles.
     autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
     autocmd FileType ocaml set tabstop=2 shiftwidth=2 softtabstop=2 textwidth=80
@@ -52,6 +53,7 @@ if has("autocmd")
     autocmd FileType text set textwidth=80
     autocmd FileType tex set textwidth=80
     autocmd FileType markdown set textwidth=80
+    autocmd FileType html set textwidth=80 tabstop=2 shiftwidth=2 softtabstop=2
     " ocaml commentstring for commenting
     " set commentstring=(*\ %s\ *)
     " autocmd FileType,BufEnter * call plug#load('ale')
@@ -82,8 +84,7 @@ let g:w_set_in_wrap = 0
 
 function! s:togglewwrap()
     if g:w_set_in_wrap
-        st
-        et fo-=w
+        set fo-=w
         let g:w_set_in_wrap = 0
     else
         set fo+=w
@@ -100,6 +101,8 @@ set completeopt-=preview
 
 " something neovim needs for vimtex to work?
 let g:vimtex_compiler_progname = 'nvr'
+" vimtex viewer
+let g:vimtex_view_general_viewer = 'zathura'
 
 " ale
 let g:ale_sign_column_always = 1
@@ -143,63 +146,115 @@ endif
 
 call plug#begin('~/.config/nvim/plugged')
 
-" tmux navigator
-Plug 'christoomey/vim-tmux-navigator'
-" tab merge
-Plug 'vim-scripts/Tabmerge'
-" ale linter
-" Defer loading until buffer enter
-Plug 'w0rp/ale' ", { 'on' : [] }
-" vimtex"
-Plug 'lervag/vimtex'
-" vim-gitgutter
-Plug 'airblade/vim-gitgutter'
+" firenvim for browsers
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 " falcon colorscheme
 Plug 'fenetikm/falcon'
-" Plug 'tomasr/molokai'
-" nerdtree
-Plug 'scrooloose/nerdtree'
-" vim-fugitive (for git)
-Plug 'tpope/vim-fugitive'
-" vim-commentary (for commenting)
-" Plug 'tpope/vim-commentary'
-" tcomment?
-Plug 'tomtom/tcomment_vim'
-" vim-hybrid-material colorscheme
-" Plug 'kristijanhuask/vim-hybrid-material'
-" pydocstring
-" Plug 'heavenshell/vim-pydocstring'
-" vim-multiline-cursors
-Plug 'terryma/vim-multiple-cursors'
-" vim surround
-Plug 'tpope/vim-surround'
 " emmet - html snippets
 Plug 'mattn/emmet-vim'
-" deoplete
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
+
+if !exists('g:started_by_firenvim')
+    " tmux navigator
+    Plug 'christoomey/vim-tmux-navigator'
+    " tab merge
+    Plug 'vim-scripts/Tabmerge'
+    " ale linter
+    " Defer loading until buffer enter
+    Plug 'w0rp/ale' ", { 'on' : [] }
+    " vimtex"
+    Plug 'lervag/vimtex'
+    " vim-gitgutter
+    Plug 'airblade/vim-gitgutter'
+    " Plug 'tomasr/molokai'
+    " nerdtree
+    Plug 'scrooloose/nerdtree'
+    " vim-fugitive (for git)
+    Plug 'tpope/vim-fugitive'
+    " vim-commentary (for commenting)
+    " Plug 'tpope/vim-commentary'
+    " tcomment?
+    Plug 'tomtom/tcomment_vim'
+    " vim-hybrid-material colorscheme
+    " Plug 'kristijanhuask/vim-hybrid-material'
+    " pydocstring
+    " Plug 'heavenshell/vim-pydocstring'
+    " vim-multiline-cursors
+    Plug 'terryma/vim-multiple-cursors'
+    " vim surround
+    Plug 'tpope/vim-surround'
+    " deoplete
+    if has('nvim')
+      Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    else
+      Plug 'Shougo/deoplete.nvim'
+      Plug 'roxma/nvim-yarp'
+      Plug 'roxma/vim-hug-neovim-rpc'
+    endif
+    " jedi for python autocopmlete
+    Plug 'zchee/deoplete-jedi'
+    " ocaml deoplete
+    Plug 'copy/deoplete-ocaml'
+    " cpp/clang deoplete
+    " Plug 'zchee/deoplete-clang'
+    " ocaml indent!
+    Plug 'let-def/ocp-indent-vim'
+    " lightline
+    Plug 'itchyny/lightline.vim'
+    " Floating terminal!
+    Plug 'voldikss/vim-floaterm'
+    " Rust
+    Plug 'rust-lang/rust.vim'
+    " markdown?
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+    " sudo for nvim
+    Plug 'lambdalisue/suda.vim'
+    " whitespace indacator
+    Plug 'ntpeters/vim-better-whitespace'
+    " riscv syntax highlighting
+    " Maybe remove later
+    Plug 'kylelaker/riscv.vim'
 endif
-" jedi for python autocopmlete
-Plug 'zchee/deoplete-jedi'
-" ocaml deoplete
-Plug 'copy/deoplete-ocaml'
-" cpp/clang deoplete
-" Plug 'zchee/deoplete-clang'
-" ocaml indent!
-Plug 'let-def/ocp-indent-vim'
-" lightline
-Plug 'itchyny/lightline.vim'
-" Floating terminal!
-Plug 'voldikss/vim-floaterm'
-" Rust
-Plug 'rust-lang/rust.vim'
-" markdown?
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 call plug#end()
+
+" Black hole register
+nnoremap X "_x
+vnoremap X "_x
+nnoremap D "_dd
+vnoremap D "_d
+
+" Control +(hjkl) for arrow keys
+" inoremap <C-k> <Up>
+" inoremap <C-j> <Down>
+" inoremap <C-h> <Left>
+" inoremap <C-l> <Right>
+
+" Ctrl-Backspace
+noremap! <C-BS> <C-W>
+noremap! <C-h> <C-w>
+set backspace=indent,eol,start
+
+" browser/firenvim specific options
+if exists('g:started_by_firenvim') && g:started_by_firenvim
+    " no status bar, no numbers, no ruler, no commands
+    " because usually textboxes are too small
+    set laststatus=0 nonumber noruler noshowcmd
+    let g:firenvim_config = {
+        \ 'globalSettings': {
+            \ 'alt': 'all',
+        \  },
+        \ 'localSettings': {
+            \ '.*': {
+                \ 'cmdline': 'neovim',
+                \ 'priority': 0,
+                \ 'selector': 'textarea',
+                \ 'takeover': 'never',
+            \ },
+        \ }
+    \ }
+endif
+
+" spellcheck
+nnoremap <silent> <F5> :setlocal spell! spelllang=en_us<CR>
 
 " deoplete
 let g:deoplete#enable_at_startup = 0
@@ -210,21 +265,6 @@ let g:deoplete#enable_at_startup = 0
 noremap <C-s> <C-w>T
 noremap <silent> <Space> :NERDTreeToggle<cr>
 "inoremap <C-Tab> <C-x><C-p>
-
-" Control +(hjkl) for arrow keys
-inoremap <C-k> <Up>
-inoremap <C-j> <Down>
-inoremap <C-h> <Left>
-inoremap <C-l> <Right>
-
-" Black hole register
-nnoremap X "_x
-vnoremap X "_x
-nnoremap D "_dd
-vnoremap D "_d
-
-" spellcheck
-nnoremap <silent> <F5> :setlocal spell! spelllang=en_us<CR>
 
 " enable deoplete
 nnoremap <F6> :call deoplete#toggle()<CR>
@@ -262,6 +302,14 @@ let g:lightline = {
 " let g:floater_keymap_toggle = '<C-t>'
 nnoremap <silent> <C-t> :FloatermToggle<CR>
 tnoremap <silent> <C-t> <C-\><C-n>:FloatermToggle<CR>
+
+" emmet maybe
+let g:user_emmet_leader_key=','
+
+" white space indacators
+" highlight ExtraWhitespace ctermbg=
+let g:better_whitespace_enabled=1
+let g:strip_whitespace_on_save=0
 
 " set colorscheme and enable 24bit colors
 colorscheme falcon
