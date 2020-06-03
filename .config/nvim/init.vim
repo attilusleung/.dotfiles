@@ -139,12 +139,21 @@ call OcamlSetup()
 "   'python': ['pyflakes', 'pylint', 'pydocstyle'],
 " hi SignColumn ctermbg=233
 
-if empty(glob('~/.config/nvim/autoload/plug.vim'))
-  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall
+if has('nvim')
+    if empty(glob('~/.config/nvim/autoload/plug.vim'))
+      silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      autocmd VimEnter * PlugInstall
+    endif
+    call plug#begin('~/.config/nvim/plugged')
+else
+    if empty(glob('~/.vim/autoload/plug.vim'))
+          silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+              \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+            autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+        endif
+    call plug#begin()
 endif
 
-call plug#begin('~/.config/nvim/plugged')
 
 " firenvim for browsers
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
@@ -152,6 +161,7 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'fenetikm/falcon'
 " emmet - html snippets
 Plug 'mattn/emmet-vim'
+<<<<<<< Updated upstream
 
 if !exists('g:started_by_firenvim')
     " tmux navigator
@@ -298,10 +308,12 @@ let g:lightline = {
     \ },
     \ }
 
-" floaterm keymaps
-" let g:floater_keymap_toggle = '<C-t>'
-nnoremap <silent> <C-t> :FloatermToggle<CR>
-tnoremap <silent> <C-t> <C-\><C-n>:FloatermToggle<CR>
+if has('nvim')
+    " floaterm keymaps
+    " let g:floater_keymap_toggle = '<C-t>'
+    nnoremap <silent> <C-t> :FloatermToggle<CR>
+    tnoremap <silent> <C-t> <C-\><C-n>:FloatermToggle<CR>
+endif
 
 " emmet maybe
 let g:user_emmet_leader_key=','
@@ -313,5 +325,8 @@ let g:strip_whitespace_on_save=0
 
 " set colorscheme and enable 24bit colors
 colorscheme falcon
+
+if v:version > 800
 " colorscheme molokai
 set termguicolors
+endif
